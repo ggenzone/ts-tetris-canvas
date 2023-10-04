@@ -1,16 +1,20 @@
 import './style.css'
 import { BLOCK_SIZE, BOARD_HEIGHT, BOARD_WIDTH } from './const'
-import { PIECES } from './pieces'
 import { moveDown, moveLeft, moveRight, moveRotate } from './moves'
 import { createBoard } from './utils'
 
 const canvas = document.querySelector('canvas')
-const context = canvas.getContext('2d')
 
-canvas.width = BLOCK_SIZE * BOARD_WIDTH
-canvas.height = BLOCK_SIZE * BOARD_HEIGHT
+const context = canvas?.getContext('2d')
 
-context.scale(BLOCK_SIZE, BLOCK_SIZE)
+if (canvas !== null) {
+  canvas.width = BLOCK_SIZE * BOARD_WIDTH
+  canvas.height = BLOCK_SIZE * BOARD_HEIGHT
+}
+
+if (context !== null && context !== undefined) {
+  context.scale(BLOCK_SIZE, BLOCK_SIZE)
+}
 
 let board = createBoard(BOARD_WIDTH, BOARD_HEIGHT)
 
@@ -38,8 +42,35 @@ function update (time = 0) {
     board = ret.board
     dropCounter = 0
   }
+
   window.requestAnimationFrame(update)
 }
+
+function draw () {
+  if (context && canvas) {
+    context.fillStyle = '#ccc'
+    context.fillRect(0, 0, canvas.width, canvas.height)
+    
+    board.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value === 1) {
+          context.fillStyle = 'yellow'
+          context.fillRect(x, y, 1, 1)
+        }
+      })
+    })
+    
+    piece.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value === 1) {
+          context.fillStyle = 'red'
+          context.fillRect(piece.position.x + x, piece.position.y + y, 1, 1)
+        }
+      })
+    })
+  }
+}
+
 
 window.document.addEventListener('keydown', function(event) {
   console.log(event)
@@ -61,32 +92,7 @@ window.document.addEventListener('keydown', function(event) {
 
   if (event.key === 'ArrowUp') {
     moveRotate(board, piece)
-  } 
+  }
 })
-
-
-function draw () {
-  context.fillStyle = '#ccc'
-  context.fillRect(0, 0, canvas.width, canvas.height)
-
-  board.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value === 1) {
-        context.fillStyle = 'yellow'
-        context.fillRect(x, y, 1, 1)
-      }
-    })
-  })
-
-  piece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value === 1) {
-        context.fillStyle = 'red'
-        context.fillRect(piece.position.x + x, piece.position.y + y, 1, 1)
-      }
-    })
-  })
-}
-
 
 update()

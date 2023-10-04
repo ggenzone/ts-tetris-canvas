@@ -1,9 +1,9 @@
 import { BOARD_WIDTH } from './const'
 import { PIECES } from './pieces'
-import { type Board, type Piece } from './types'
+import { type Board, type Piece, type Game} from './types'
 
 export function createBoard (width: number, height: number): Board {
-  const emptyBoard = (Array(height-1).fill().map(() => Array(width).fill(0)))
+  const emptyBoard = (Array(height-1).map(() => Array(width).fill(0)))
 
   const lastRow = Array(width).fill(1)
   lastRow[6] = 0
@@ -14,8 +14,8 @@ export function createBoard (width: number, height: number): Board {
 }
 
 export function checkCollision (board: Board, piece: Piece): boolean {
-  return piece.shape.find((row, y) => {
-    return row.find((value, x) => {
+  return piece.shape.some((row, y) => {
+    return row.some((value, x) => {
       const boardValue = board[piece.position.y + y]?.[piece.position.x + x]
       if (boardValue === undefined) {
         return true
