@@ -3,7 +3,7 @@ import { PIECES } from './pieces'
 import { type Board, type Piece, type Game} from './types'
 
 export function createBoard (width: number, height: number): Board {
-  const emptyBoard = (Array(height-1).map(() => Array(width).fill(0)))
+  const emptyBoard: Board = (Array(height-1).fill(0).map(() => Array(width).fill(0)))
 
   const lastRow = Array(width).fill(1)
   lastRow[6] = 0

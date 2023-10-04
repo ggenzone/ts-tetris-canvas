@@ -65,6 +65,7 @@ function draw () {
         if (value === 1) {
           context.fillStyle = 'red'
           context.fillRect(piece.position.x + x, piece.position.y + y, 1, 1)
+          
         }
       })
     })
