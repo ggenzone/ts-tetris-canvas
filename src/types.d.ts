@@ -2,6 +2,8 @@
 export interface Game {
   board: Board
   piece: Piece
+  nextShape: Shape
+  score: number
 }
 export type Board = number[][]
 export interface Position {
@@ -13,3 +15,5 @@ export interface Piece {
   position: Position
   shape: number[][]
 }
+
+export type Shape = number[][]

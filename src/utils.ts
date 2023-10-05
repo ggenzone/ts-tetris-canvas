@@ -1,16 +1,23 @@
-import { BOARD_WIDTH } from './const'
-import { PIECES } from './pieces'
-import { type Board, type Piece, type Game} from './types'
+import { BOARD_HEIGHT, BOARD_WIDTH } from './const'
+import { getRandomShape } from './pieces'
+import { type Board, type Piece, type Game, Shape } from './types'
 
-export function createBoard (width: number, height: number): Board {
-  const emptyBoard: Board = (Array(height-1).fill(0).map(() => Array(width).fill(0)))
-
-  const lastRow = Array(width).fill(1)
-  lastRow[6] = 0
-  lastRow[7] = 0
-  emptyBoard.push(lastRow)
+function createBoard (width: number, height: number): Board {
+  const emptyBoard: Board = (Array(height).fill(0).map(() => Array(width).fill(0)))
 
   return emptyBoard
+}
+
+export function getInitialGame (): Game {
+  return {
+    board: createBoard(BOARD_WIDTH, BOARD_HEIGHT),
+    piece: {
+      position: { x: 5, y: 7 },
+      shape: getRandomShape()
+    },
+    nextShape: getRandomShape(),
+    score: 0
+  }
 }
 
 export function checkCollision (board: Board, piece: Piece): boolean {
@@ -27,47 +34,64 @@ export function checkCollision (board: Board, piece: Piece): boolean {
   })
 }
 
-export function removeRows (board: Board): Board {
-  const newBoard = structuredClone(board)
+export function removeRows (game: Game): Game {
+  const newGame = structuredClone(game)
   const rowsToRemove: number[] = []
 
-  newBoard.forEach((row, y) => {
+  newGame.board.forEach((row, y) => {
     if (row.every(value => value === 1)) {
       rowsToRemove.push(y)
     }
   })
 
   rowsToRemove.forEach((y) => {
-    newBoard.splice(y, 1)
+    newGame.board.splice(y, 1)
     const newRow = Array(BOARD_WIDTH).fill(0)
-    newBoard.unshift(newRow)
+    newGame.board.unshift(newRow)
   })
 
-  return newBoard
+  newGame.score += (100 * rowsToRemove.length)
+  return newGame
 }
 
-export function solidifyPiece (board: Board, piece: Piece): Game {
-  const newBoard = structuredClone(board)
+export function solidifyPiece (game: Game): Game {
+  const newGame = structuredClone(game)
 
-  piece.shape.forEach((row, y) => {
+  newGame.piece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value === 1) {
-        if (board[y + piece.position.y]?.[x + piece.position.x] !== undefined) {
-          newBoard[y + piece.position.y][x + piece.position.x] = 1
+        if (newGame.board[y + newGame.piece.position.y]?.[x + newGame.piece.position.x] !== undefined) {
+          newGame.board[y + newGame.piece.position.y][x + newGame.piece.position.x] = 1
         }
       }
     })
   })
 
-  piece.shape = PIECES[Math.floor(Math.random() * PIECES.length)]
-  piece.position.x = (BOARD_WIDTH / 2)
-  piece.position.y = 0
+  newGame.piece.shape = structuredClone(newGame.nextShape)
+  newGame.piece.position.x = (BOARD_WIDTH / 2)
+  newGame.piece.position.y = 0
+  newGame.nextShape = getRandomShape()
+  newGame.score += 10
 
-  if (checkCollision(board, piece)) {
+  if (checkCollision(newGame.board, newGame.piece)) {
     //solidifyPiece()
-    newBoard.forEach(row => row.fill(0))
+    newGame.board.forEach(row => row.fill(0))
     window.alert('Ha ha')
   }
 
-  return { board: newBoard, piece: piece }
+  return newGame
+}
+
+export function transposeShape (shape: Shape): Shape {
+  const newShape = []
+  for (let i = 0; i < shape[0].length; i++) {
+    const row = []
+    for (let j = shape.length - 1; j >= 0; j--) {
+      row.push(shape[j][i])
+    }
+
+    newShape.push(row)
+  }
+
+  return newShape
 }

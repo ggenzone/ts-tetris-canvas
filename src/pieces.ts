@@ -1,4 +1,6 @@
-export const PIECES = [
+import { type Shape } from './types'
+
+export const Shapes: Shape[] = [
   [
     [1, 1],
     [1, 1]
@@ -31,3 +33,7 @@ export const PIECES = [
     [1, 1]
   ]
 ]
+
+export function getRandomShape (): Shape {
+  return Shapes[Math.floor(Math.random() * Shapes.length)]
+}
