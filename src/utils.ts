@@ -2,7 +2,7 @@ import { BOARD_HEIGHT, BOARD_WIDTH } from './const'
 import { getRandomShape } from './pieces'
 import { type Board, type Piece, type Game, Shape } from './types'
 
-function createBoard (width: number, height: number): Board {
+export function createBoard (width: number, height: number): Board {
   const emptyBoard: Board = (Array(height).fill(0).map(() => Array(width).fill(0)))
 
   return emptyBoard

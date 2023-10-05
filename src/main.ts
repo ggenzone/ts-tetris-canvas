@@ -69,41 +69,53 @@ function update (time = 0) {
 }
 
 function draw (game: Game) {
-  if (context && canvas) {
-    context.fillStyle = '#ccc'
-    context.fillRect(0, 0, canvas.width, canvas.height)
-    
-    game.board.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value === 1) {
-          context.fillStyle = 'yellow'
-          context.fillRect(x, y, 1, 1)
-        }
-      })
-    })
-
-    game.piece.shape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value === 1) {
-          context.fillStyle = 'red'
-          context.fillRect(game.piece.position.x + x, game.piece.position.y + y, 1, 1)
-        }
-      })
-    })
-    nextContext.fillStyle = '#ccc'
-    nextContext.fillRect(0, 0, next.width, next.height)
-
-    game.nextShape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value === 1) {
-          nextContext.fillStyle = 'red'
-          nextContext.fillRect(x, y, 1, 1)
-        }
-      })
-    })
-
-    score.innerHTML = game.score.toString()
+  if (canvas === null || next === null || score === null) {
+    throw new Error('Something is wrong with the tags IDs')
   }
+
+  const isCanvas = canvas instanceof HTMLCanvasElement && next instanceof HTMLCanvasElement 
+
+  if (!isCanvas) {
+    throw new Error('Elements are not canvas tags')
+  }
+
+  if (context === null || nextContext === null) {
+    throw new Error('Unable to retrive 2d context from canvas elements')
+  }
+
+  context.fillStyle = '#ccc'
+  context.fillRect(0, 0, canvas.width, canvas.height)
+
+  game.board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value === 1) {
+        context.fillStyle = 'yellow'
+        context.fillRect(x, y, 1, 1)
+      }
+    })
+  })
+
+  game.piece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value === 1) {
+        context.fillStyle = 'red'
+        context.fillRect(game.piece.position.x + x, game.piece.position.y + y, 1, 1)
+      }
+    })
+  })
+  nextContext.fillStyle = '#ccc'
+  nextContext.fillRect(0, 0, next.width, next.height)
+
+  game.nextShape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value === 1) {
+        nextContext.fillStyle = 'red'
+        nextContext.fillRect(x, y, 1, 1)
+      }
+    })
+  })
+
+  score.innerHTML = game.score.toString()
 }
 
 const HANDLER: Record<string, () => void> = {
